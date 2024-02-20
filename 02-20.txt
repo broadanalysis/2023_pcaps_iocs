@@ -1,0 +1,19 @@
+"@harmj0y" "@mattifestation" "@enigma0x3" "@obscuresec" "@tiraniddo" "@fuzzySec" "@clymb3r" "@nikhil_mitt" "@sixdub" "@Arno0x0x" 
+
+
+aid=my-aid event_simpleName="NetworkConnectIP4" | rename ContextProcessId_decimal as TargetProcessId_decimal | join
+TargetProcessId_decimal [search aid=my-aid event_simpleName="ProcessRollup2" ImageFileName="*PROCESS"] | table ComputerName
+timestamp ImageFileName RemoteAddressIP4 CommandLine
+
+
+Source of Renamed Executables
+event_simpleName="NewExecutableRenamed"
+| rename SourceFileName as OriginalFileName
+| rename TargetFileName as NewFileName
+| rename ContextProcessId_decimal as TargetProcessId_decimal
+| join TargetProcessId_decimal
+    [ search event_simpleName="ProcessRollup2" ]
+| rename ImageFileName as ParentProcess
+| rename ParentBaseFileName as GrandParentProcess
+| rename CommandLine as ParentProcessCommandLine
+| table ComputerName OriginalFileName NewFileName GrandParentProcess ParentProcess ParentProcessCommandLine
