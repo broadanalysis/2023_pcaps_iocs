@@ -1,0 +1,35 @@
+from my.synthesis.endpoint.powershellscriptblocklogging
+where (weakhas(ScriptBlockText, "Invoke-Nightmare"))
+
+from my.synthesis.endpoint.powershellscriptblocklogging
+where (weakhas(ScriptBlockText, "Invoke-DNSExfiltrator"))
+
+from my.synthesis.endpoint.powershellmodulelogging
+where (weakhas(details, "Invoke-ACLScanner") or weakhas(details, "Invoke-Kerberoast") or weakhas(details, "Find-DomainShare"))
+
+from my.synthesis.endpoint.powershellmodulelogging
+where (weakhas(details, "Invoke-Empire"))
+
+from my.synthesis.endpoint.powershellmodulelogging
+where (weakhas(details, "Invoke-Mimikatz"))
+
+from my.synthesis.endpoint.powershellmodulelogging
+where (weakhas(details, "UACTokenMagic") or weakhas(details, "Invoke-SluiBypass") or weakhas(details, "Invoke-SluiHijack") or weakhas(details, "Invoke-FodhelperBypass") or weakhas(details, "Invoke-TokenDuplication"))
+
+from my.synthesis.endpoint.powershellscriptblocklogging
+where weakhas(ScriptBlockText, "Invoke-BloodHound")
+
+from my.synthesis.endpoint.powershellscriptblocklogging
+where (weakhas(ScriptBlockText, "Invoke-CheckLocalAdminAccess") or weakhas(ScriptBlockText, "Invoke-ShareFinder") or weakhas(ScriptBlockText, "Invoke-UserHunter") or weakhas(ScriptBlockText, "Invoke-EventHunter") or weakhas(ScriptBlockText, "Invoke-EnumerateLocalAdmin") or weakhas(ScriptBlockText, "Invoke-FileFinder") or weakhas(ScriptBlockText, "Invoke-ACLScanner") or weakhas(ScriptBlockText, "Invoke-MapDomainTrust") or weakhas(ScriptBlockText, "Invoke-ProcessHunter") or weakhas(ScriptBlockText, "Invoke-ThreadedFunction"))
+
+from my.synthesis.endpoint.powershellscriptblocklogging
+  where weakhas(ScriptBlockText, "Invoke-Phant0m")
+  
+  from my.synthesis.endpoint.powershellscriptblocklogging
+where (weakhas(ScriptBlockText, "UACTokenMagic") or weakhas(ScriptBlockText, "Invoke-SluiBypass") or weakhas(ScriptBlockText, "Invoke-SluiHijack") or weakhas(ScriptBlockText, "Invoke-FodhelperBypass") or weakhas(ScriptBlockText, "Invoke-TokenDuplication"))
+
+from my.synthesis.endpoint.powershellscriptblocklogging
+where (weakhas(ScriptBlockText, "Invoke-Nightmare"))
+
+from my.synthesis.endpoint.powershellscriptblocklogging
+where (weakhas(ScriptBlockText, "Invoke-DNSExfiltrator"))
