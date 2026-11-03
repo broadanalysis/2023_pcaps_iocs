@@ -1,0 +1,31 @@
+// Hunt 1 - Exposure: Falcon telemetry referencing the affected extension folders
+#repo=base_sensor
+| case {
+    TargetFileName=/anthropic\.claude-code-2\.1\.31[23]-/iF | ArtifactPath := TargetFileName ;
+    ImageFileName=/anthropic\.claude-code-2\.1\.31[23]-/iF | ArtifactPath := ImageFileName ;
+    CommandLine=/anthropic\.claude-code-2\.1\.31[23]-/iF | ArtifactPath := CommandLine ;
+  }
+// Intentional: no * fall-through - only events that touch the extension folders survive
+| ArtifactPath=/anthropic\.claude-code-(?<ExtVersion>2\.1\.31[23])-(?<ExtPlatform>[a-z0-9]+-[a-z0-9]+)/i
+| case {
+    ArtifactPath=/[\\\/]\.cursor[\\\/]/iF | Editor := "Cursor" ;
+    ArtifactPath=/[\\\/]\.vscode(-insiders)?[\\\/]/iF | Editor := "VS Code" ;
+    * | Editor := "Other" ;
+  }
+| case {
+    ExtVersion="2.1.313" | Risk := "HIGH - 2.1.313 exists only as the malicious build" ;
+    Editor="Cursor" | Risk := "HIGH - 2.1.312 under Cursor (malicious if installed in window)" ;
+    * | Risk := "LOW - 2.1.312 outside Cursor (Open-VSX/MS build verified clean)" ;
+  }
+| groupBy([aid, ExtVersion, ExtPlatform, Editor, Risk],
+    function=[count(as=Events),
+              min(@timestamp, as=FirstSeen),
+              max(@timestamp, as=LastSeen),
+              collect([#event_simpleName], limit=10),
+              selectLast([ArtifactPath])],
+    limit=max)
+| match(file="aid_master_main.csv", field=[aid], column=aid, include=[ComputerName], strict=false)
+| sort(Risk, order=asc, limit=1000)
+| formatTime(format="%F %T %Z", field=FirstSeen, as=FirstSeen)
+| formatTime(format="%F %T %Z", field=LastSeen, as=LastSeen)
+| table([ComputerName, aid, Risk, ExtVersion, ExtPlatform, Editor, FirstSeen, LastSeen, Events, "#event_simpleName", ArtifactPath], limit=1000)
