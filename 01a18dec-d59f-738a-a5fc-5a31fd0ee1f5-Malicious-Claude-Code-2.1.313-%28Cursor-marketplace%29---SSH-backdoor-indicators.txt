@@ -1,0 +1,23 @@
+// Vigil: Malicious Claude Code 2.1.313 (Cursor marketplace) - SSH backdoor indicators
+// Covers: editor helper writes authorized_keys, reverse SSH tunnel, editor helper outbound SSH, known C2 IP
+// ATT&CK: T1098.004, T1572, T1021.004, T1195.002
+
+#event_simpleName=/^(FileWritten|ProcessRollup2|NetworkConnectIP4)$/
+| case {
+    #event_simpleName=FileWritten
+      TargetFileName=/[\\\/]\.ssh[\\\/]authorized_keys$/i
+      ContextBaseFileName=/^(Cursor|Code)(\s+Helper.*)?(\.exe)?$/i
+      | Indicator := "Editor process wrote SSH authorized_keys";
+    #event_simpleName=ProcessRollup2
+      FileName=/^(ssh|autossh)(\.exe)?$/i
+      CommandLine=/-R\s*['"]?\*?:?0:localhost:22/i
+      | Indicator := "Reverse SSH tunnel to localhost:22";
+    #event_simpleName=NetworkConnectIP4
+      ContextBaseFileName=/^(Cursor|Code)(\s+Helper.*)?(\.exe)?$/i
+      RemotePort=22
+      | Indicator := "Editor helper outbound SSH";
+    #event_simpleName=NetworkConnectIP4
+      RemoteAddressIP4="134.209.82.225"
+      | Indicator := "Known C2 IP (single-source IOC)";
+  }
+| table([@timestamp, Indicator, aid, ComputerName, UserName, ContextBaseFileName,ParentBaseFileName, FileName, CommandLine, TargetFileName, RemoteAddressIP4, RemotePort])
