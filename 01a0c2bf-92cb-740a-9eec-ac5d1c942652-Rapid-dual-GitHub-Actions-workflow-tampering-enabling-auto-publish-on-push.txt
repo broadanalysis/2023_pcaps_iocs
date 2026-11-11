@@ -1,0 +1,9 @@
+#event_simpleName = /(?i)(github.*workflow.*update|WorkflowFileModified|PushEvent|ContentModified)/
+| (FilePath = /\.github\/workflows\/.*\.ya?ml$/i OR TargetFileName = /\.github\/workflows\/.*\.ya?ml$/i OR RepositoryPath = /\.github\/workflows\/.*\.ya?ml$/i)
+| (FileContent = /on:\s*\n?\s*push:\s*\n?\s*branches:\s*-\s*main/i OR CommitDiff = /on:\s*push:\s*branches:\s*-\s*main/i OR CommitDiff = /workflow_dispatch/i OR CommitDiff = /publish.*unattended/i OR CommitDiff = /OIDC trusted publishing/i OR CommitDiff = /publishing must always be intentional/i)
+| groupBy([RepositoryName, ActorName, FilePath], function=[count(as=modification_count), min(@timestamp, as=first_change), max(@timestamp, as=second_change)])
+| duration_minutes := (second_change - first_change) / 60000
+| modification_count >= 2
+| duration_minutes <= 20
+| table([RepositoryName, ActorName, FilePath, modification_count, first_change, second_change, duration_minutes])
+| sort(duration_minutes, order=asc)
