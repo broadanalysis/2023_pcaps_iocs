@@ -1,0 +1,10 @@
+// Narrower rule: ProcessRollup2 command-line view only. Does not cover file-open events or unsigned-binary checks.
+#event_simpleName=ProcessRollup2 event_platform=Mac
+| ImageFileName = /(\/|^)(osascript|bash|sh|zsh|python[0-9.]*|curl|ls|find|cp|zip|ditto)$/i
+| CommandLine = /(Local Extension Settings|Application Support\/(Google\/Chrome|BraveSoftware|Microsoft Edge|Arc)[^ ]*\/Extensions|Firefox\/Profiles[^ ]*\/extensions|storage\/default\/moz-extension|nkbihfbeogaeaoehlefnkodbefgpgknn|bfnaelmomeimhlpmgjnjophhpkkoljpa|hnfanknocfeofbddgcijnmhnfnkdnaad|egjidjbpglichdcondbcbdnbeeppgdph|dmkamcknogkgcdfhhbddcghachkejeap|fnjhmkhhmkbjkkabndcnnogagogbneec|fhbohimaelbohpjbbldcngcnapndodjp)/i
+| ImageFileName != /(Google Chrome|Brave Browser|Microsoft Edge|Arc|Firefox)/i
+| CommandLine != /rm\s+-rf/i
+| CommandLine != /rm\s+-f/i
+| CommandLine != /ExtensionInstallBlocklist\s+-array-add/i
+| bucket(span=5m, field=[aid, ComputerName, ParentBaseFileName], function=[count(CommandLine, distinct=true, as=DistinctCommandCount), count(as=EventCount), min(@timestamp, as=FirstSeen), max(@timestamp, as=LastSeen), collect([UserName, ImageFileName, CommandLine])])
+| DistinctCommandCount > 4 or CommandLine ="*/Library/Application Support/*/Default/Extensions*"
